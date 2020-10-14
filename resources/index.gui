@@ -1,0 +1,8 @@
+<svg viewport-fill="lightblue">
+  <svg class="horizontal-pad full-size" y="50" x="20">
+    <text class="text stack-gap" id="0" >...station</text><circle cx="80%" y="56" cy="35" r="25" fill="blue" />
+    <text class="text stack-gap" id="1" >...station</text>
+    <text class="text stack-gap" id="2" >...station</text>
+    <text class="text stack-gap" id="3" >...station</text>
+  </svg>
+</svg>

@@ -1,0 +1,34 @@
+{
+  "name": "sl",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "fitbit": {
+    "appUUID": "85a14fd9-55b6-4886-b387-47f2d38d51fa",
+    "appType": "app",
+    "appDisplayName": "sl",
+    "wipeColor": "#ffffff",
+    "requestedPermissions": [
+      "access_location",
+      "access_internet"
+    ],
+    "buildTargets": [
+      "mira"
+    ],
+    "i18n": {},
+    "defaultLanguage": "en-US"
+  },
+  "scripts": {
+    "build": "fitbit-build",
+    "debug": "fitbit"
+  },
+  "devDependencies": {
+    "@fitbit/sdk": "~4.0.0-pre.4",
+    "@fitbit/sdk-cli": "^1.7.0-pre.1"
+  },
+  "dependencies": {
+    "@openid/appauth": "^1.2.8",
+    "@fitbit/sdk": "~4.0.0-pre.4",
+    "@fitbit/sdk-cli": "^1.7.0-pre.1"
+  }
+}
