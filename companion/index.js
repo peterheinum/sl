@@ -50,7 +50,7 @@ const getIdsOfCloseStops = (closeStops) => {
   return Promise.all(urls.map(extractFirstId))
 }
 
-const extractWantedInfo = ({ Destination, DisplayTime, LineNumber }) => ({ Destination, DisplayTime, LineNumber })
+const extractWantedInfo = ({ Destination, DisplayTime, LineNumber }) => ({ d: Destination, t: DisplayTime, n: LineNumber })
 
 const getNextDeparturesFromCloseStops = (closeStopIds) => {
   const mapper = siteId => createUrl('/realtimedeparturesV4.json', { timewindow: 30, siteId })
@@ -60,11 +60,10 @@ const getNextDeparturesFromCloseStops = (closeStopIds) => {
   return Promise.all(urls.map(extractBusesAndMetro))
 }
 
-const returnMessage = (type) => (data) => messaging.peerSocket.send([type, ...data])
+const returnMessage = (data) => messaging.peerSocket.send(data)
 
 
 const filterEmpty = data => data.filter(arr => arr.length)
-
 
 const massageNames = (stationName) => stationName.includes(' ') ? stationName.split(' ')[0] : stationName
 
@@ -74,23 +73,23 @@ const gpsRecieved = (data) => {
   const { longitude, latitude } = data 
   
   const url = createUrl('/nearbystopsv2', { originCoordLat: latitude, originCoordLong: longitude, maxNo: 4 })
-  extract(url)
+  return extract(url)
     .then(getNamesOfCloseStops)
     .then(tap(saveStationsToState))
     .then(map(massageNames))
-    .then(returnMessage('stRC'))
 }
+
+const flatten = array => array.reduce((acc, cur) => ([...acc, ...cur]),[])
 
 messaging.peerSocket.onmessage = ({data}) => {
   const { type } = data
   
-  type === 'gpsRecieved' && gpsRecieved(data)
-
-
-    // .then(getIdsOfCloseStops)
-    // .then(getNextDeparturesFromCloseStops)
-    // .then(filterEmpty)
-    // .then(returnMessage)
+  gpsRecieved(data)
+    .then(getIdsOfCloseStops)
+    .then(getNextDeparturesFromCloseStops)
+    .then(filterEmpty)
+    .then(flatten)
+    .then(returnMessage)
  }
 
 

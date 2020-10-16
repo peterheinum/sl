@@ -12,10 +12,14 @@ messaging.peerSocket.onopen = () => {
 }
 
 const createClickableStation = (stations) => {
-  for (let i = 0; i < 4; i++) {
-    const el = document.getElementById(i) 
-    el.text = stations[i] || ''
-    stations[i] && el.addEventListener('click', () => console.log('stations[i]'))
+  for (let i = 0; i < stations.length; i++) {
+    const lineEl = document.getElementById(`line${i}`) 
+    const departureEl = document.getElementById(`departure${i}`) 
+    const {d, t, n} = stations[i]
+    console.log(lineEl, `line${i}`)
+    console.log(departureEl)
+    lineEl && (lineEl.text = `${n} ${d}`)
+    departureEl && (departureEl.text = `${t}`)
   }
 }
 
@@ -25,8 +29,8 @@ messaging.peerSocket.onerror = err => {
 
 messaging.peerSocket.onmessage = ({data}) => {
   console.log(JSON.stringify(data))
-  const type = data[0]
-  type === 'stRC' && createClickableStation(data.slice(1, data.length))
+  console.log('yo')
+  createClickableStation(data)
 }
 
 const sendMessage = (data, type) => {
