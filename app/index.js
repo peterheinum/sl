@@ -4,32 +4,28 @@ import { geolocation } from "geolocation";
 import * as messaging from "messaging"
 
 import { display } from "display"
-display.addEventListener('change', (e) => {
-  console.log(display.off)
-  console.log(JSON.stringify(e))
-  if(display.off) display.on = true 
-  console.log(JSON.stringify(display))
-})
+import { vibration } from "haptics";
+
+
+messaging.peerSocket.onopen = () => {
+}
 
 const startTime = new Date().getTime()
 console.log(startTime)
-
-geolocation.getCurrentPosition(({coords}) => {
+const succesCallback = ({coords}) => {
   console.log(new Date().getTime() - startTime)
   console.log('i know your adress')
+  display.poke()
   sendMessage(coords)
-}, error => console.log(error), { maximumAge: Infinity })
+}
+const errorCallback = error => console.log(JSON.stringify(error))
 
+const options = {
+  maximumAge: 1200000,
+  timeout: 60000
+}
 
-// messaging.peerSocket.onopen = () => {
-//   console.log(new Date().getTime() - startTime)
-//   console.log('huston')
-//   if (Object.keys(fetchedCordinates).length) {
-//     sendMessage(fetchedCordinates)
-//   } else {
-//     geolocation.getCurrentPosition(({coords}) => sendMessage(coords), { maximumAge: Infinity })
-//   }
-// }
+geolocation.getCurrentPosition(succesCallback, errorCallback, options)
 
 const selectId = (id) => document.getElementById(id)
 
@@ -60,13 +56,16 @@ messaging.peerSocket.onerror = err => {
 }
 
 messaging.peerSocket.onmessage = ({data}) => {
+  vibration.start("nudge-max")
+  setTimeout(() => {
+    vibration.start("ping")
+  }, 1000)
+
+  display.poke()
+  console.log('data has arrived')
   renderStations(data)
   const dateAfterRender = new Date().getTime()
   console.log(dateAfterRender)
-  // const { state } = data
-  // state 
-  //   ? console.log(state)
-  //   : 
 }
 
 const sendMessage = (data) => {

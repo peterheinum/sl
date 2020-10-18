@@ -23,12 +23,12 @@
     "debug": "fitbit"
   },
   "devDependencies": {
-    "@fitbit/sdk": "~4.0.0-pre.4",
-    "@fitbit/sdk-cli": "^1.7.0-pre.1"
+    "@fitbit/sdk": "~4.1.0",
+    "@fitbit/sdk-cli": "^1.7.3"
   },
   "dependencies": {
     "@openid/appauth": "^1.2.8",
-    "@fitbit/sdk": "~4.0.0-pre.4",
-    "@fitbit/sdk-cli": "^1.7.0-pre.1"
+    "@fitbit/sdk": "~4.1.0",
+    "@fitbit/sdk-cli": "^1.7.3"
   }
 }

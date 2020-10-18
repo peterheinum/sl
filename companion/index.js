@@ -69,7 +69,8 @@ const saveStationsToState = stationNames => state.stations = stationNames
 
 const gpsRecieved = (data) => {
   const { longitude, latitude } = data 
-  
+  if (!longitude || !latitude) return Promise.reject('ping')
+
   const url = createUrl('/nearbystopsv2', { originCoordLat: latitude, originCoordLong: longitude, maxNo: 4 })
   return extract(url)
     .then(getNamesOfCloseStops)
@@ -79,11 +80,13 @@ const gpsRecieved = (data) => {
 const sendState = () => sendMessage({state})
 
 messaging.peerSocket.onmessage = ({data}) => {
+  console.log('companion msg recived')
   gpsRecieved(data)
     .then(getIdsOfCloseStops)
     .then(getNextDeparturesFromCloseStops)
     .then(flatten)
-    .then(sendMessage) 
+    .then(sendMessage)
+    .catch(console.log)
     // .then(sleep(1000))
     // .then(sendState)
  }
