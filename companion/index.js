@@ -1,4 +1,7 @@
-import * as messaging from "messaging"
+import { geolocation } from "geolocation"
+
+
+import * as messaging from 'messaging'
 import {
   pipe,
   flatten,
@@ -15,11 +18,11 @@ const state = {
 }
 
 messaging.peerSocket.onopen = () => {
-  console.log("Ready");
+  console.log('Ready')
 }
 
 messaging.peerSocket.onerror = (err) => {
-  console.log(`Connection error: ${err.code} - ${err.message}`);
+  console.log(`Connection error: ${err.code} - ${err.message}`)
 }
 
 const parseResponse = response => response.text()
@@ -63,12 +66,35 @@ const getNextDeparturesFromCloseStops = (closeStopIds) => {
   return doAll(urls.map(extractBusesAndMetro))
 }
 
-const sendMessage = (data) => messaging.peerSocket.send(data)
+const symbolCounter = pipe(JSON.stringify, str => str.length)
+
+const splitToChunks = (arr, chunkSize, acc = []) => (
+  arr.length > chunkSize ?
+      splitToChunks(
+          arr.slice(chunkSize),
+          chunkSize,
+          [...acc, arr.slice(0, chunkSize)]
+      ) :
+      [...acc, arr]
+)
+
+const sendMessage = (data) => {
+  messaging.peerSocket.send(data)
+} 
+
+const chunkAndSend = (data) => {
+  const safeByteAmount = symbolCounter(data) > 260 
+    ? splitToChunks(data, 3)
+    : [data]
+  safeByteAmount.forEach(chunk => sendMessage(chunk))
+  sendMessage({complete: true})
+}
 
 const saveStationsToState = stationNames => state.stations = stationNames
 
 const gpsRecieved = (data) => {
-  const { longitude, latitude } = data 
+  const { longitude, latitude } = data
+
   if (!longitude || !latitude) return Promise.reject('ping')
 
   const url = createUrl('/nearbystopsv2', { originCoordLat: latitude, originCoordLong: longitude, maxNo: 4 })
@@ -77,16 +103,17 @@ const gpsRecieved = (data) => {
     .then(tap(pipe(flatten, saveStationsToState)))
 }
 
-const sendState = () => sendMessage({state})
 
-messaging.peerSocket.onmessage = ({data}) => {
+
+messaging.peerSocket.onmessage = () => {
   console.log('companion msg recived')
-  gpsRecieved(data)
+  
+  geolocation.getCurrentPosition(({coords}) => {
+    gpsRecieved(coords)
     .then(getIdsOfCloseStops)
     .then(getNextDeparturesFromCloseStops)
     .then(flatten)
-    .then(sendMessage)
+    .then(chunkAndSend)
     .catch(console.log)
-    // .then(sleep(1000))
-    // .then(sendState)
+  })
  }

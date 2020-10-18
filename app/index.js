@@ -1,6 +1,4 @@
 import document from 'document'
-import { geolocation } from "geolocation";
-
 import * as messaging from "messaging"
 
 import { display } from "display"
@@ -8,28 +6,14 @@ import { vibration } from "haptics";
 
 
 messaging.peerSocket.onopen = () => {
+  console.log('Ready')
+  sendMessage({})
 }
-
-const startTime = new Date().getTime()
-console.log(startTime)
-const succesCallback = ({coords}) => {
-  console.log(new Date().getTime() - startTime)
-  console.log('i know your adress')
-  display.poke()
-  sendMessage(coords)
-}
-const errorCallback = error => console.log(JSON.stringify(error))
-
-const options = {
-  maximumAge: 1200000,
-  timeout: 60000
-}
-
-geolocation.getCurrentPosition(succesCallback, errorCallback, options)
 
 const selectId = (id) => document.getElementById(id)
 
 const renderStations = (stations) => {
+  console.log(stations.length)
   for (let i = 0; i < stations.length; i++) {
     const {d, t, n} = stations[i]
 
@@ -55,24 +39,30 @@ messaging.peerSocket.onerror = err => {
   console.log(`Connection error: ${err.code} - ${err.message}`)
 }
 
-messaging.peerSocket.onmessage = ({data}) => {
-  vibration.start("nudge-max")
-  setTimeout(() => {
-    vibration.start("ping")
-  }, 1000)
+const state = []
 
-  display.poke()
-  console.log('data has arrived')
-  renderStations(data)
-  const dateAfterRender = new Date().getTime()
-  console.log(dateAfterRender)
+messaging.peerSocket.onmessage = ({data}) => {
+  const { complete } = data
+  if (complete) {
+    vibration.start("nudge-max")
+    display.poke()
+    renderStations(state)
+  } else {
+    state.push(...data)
+  }
 }
 
 const sendMessage = (data) => {
+  console.log('we want to send message in the app')
   if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
     // Send the data to peer as a message
     messaging.peerSocket.send({
       ...data
     })
+  } else {
+    console.log('but we cant')
+    setTimeout(() => {
+      sendMessage(data)
+    }, 500)
   }
 }
