@@ -11,9 +11,17 @@ messaging.peerSocket.onopen = () => {
 
 const selectId = (id) => document.getElementById(id)
 
+const hideRow = (i) => {
+  selectId(`row_${i}`).style.display = 'none'
+}
+
 const renderStations = (stations) => {
   console.log(stations.length)
-  for (let i = 0; i < stations.length; i++) {
+  for (let i = 0; i < 17; i++) {
+    if (!stations[i]) {
+      hideRow(i)
+      continue
+    }
     const {d, t, n} = stations[i]
 
     const lineEl = selectId(`line_${i}`) 
