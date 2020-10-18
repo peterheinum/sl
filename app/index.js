@@ -18,7 +18,7 @@ geolocation.getCurrentPosition(({coords}) => {
   console.log(new Date().getTime() - startTime)
   console.log('i know your adress')
   sendMessage(coords)
-}, { maximumAge: Infinity })
+}, error => console.log(error), { maximumAge: Infinity })
 
 
 // messaging.peerSocket.onopen = () => {
