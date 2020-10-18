@@ -83,7 +83,7 @@ messaging.peerSocket.onmessage = ({data}) => {
     .then(getIdsOfCloseStops)
     .then(getNextDeparturesFromCloseStops)
     .then(flatten)
-    .then(sendMessage)
-    .then(sleep(1000))
-    .then(sendState)
+    .then(sendMessage) 
+    // .then(sleep(1000))
+    // .then(sendState)
  }

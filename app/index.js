@@ -1,15 +1,35 @@
 import document from 'document'
-import * as messaging from "messaging"
-
 import { geolocation } from "geolocation";
 
-messaging.peerSocket.onopen = () => {
-  console.log("Ready")
-  
-  const onPositionRetrieved = ({coords}) => sendMessage(coords, 'gpsRecieved')
-  
-  geolocation.getCurrentPosition(onPositionRetrieved)
-}
+import * as messaging from "messaging"
+
+import { display } from "display"
+display.addEventListener('change', (e) => {
+  console.log(display.off)
+  console.log(JSON.stringify(e))
+  if(display.off) display.on = true 
+  console.log(JSON.stringify(display))
+})
+
+const startTime = new Date().getTime()
+console.log(startTime)
+
+geolocation.getCurrentPosition(({coords}) => {
+  console.log(new Date().getTime() - startTime)
+  console.log('i know your adress')
+  sendMessage(coords)
+}, { maximumAge: Infinity })
+
+
+// messaging.peerSocket.onopen = () => {
+//   console.log(new Date().getTime() - startTime)
+//   console.log('huston')
+//   if (Object.keys(fetchedCordinates).length) {
+//     sendMessage(fetchedCordinates)
+//   } else {
+//     geolocation.getCurrentPosition(({coords}) => sendMessage(coords), { maximumAge: Infinity })
+//   }
+// }
 
 const selectId = (id) => document.getElementById(id)
 
@@ -40,19 +60,20 @@ messaging.peerSocket.onerror = err => {
 }
 
 messaging.peerSocket.onmessage = ({data}) => {
-  console.log(JSON.stringify(data))
-  const { state } = data
-  state 
-    ? console.log(state)
-    : renderStations(data)
+  renderStations(data)
+  const dateAfterRender = new Date().getTime()
+  console.log(dateAfterRender)
+  // const { state } = data
+  // state 
+  //   ? console.log(state)
+  //   : 
 }
 
-const sendMessage = (data, type) => {
+const sendMessage = (data) => {
   if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
     // Send the data to peer as a message
     messaging.peerSocket.send({
-      ...data,
-      type
+      ...data
     })
   }
 }
