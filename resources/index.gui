@@ -1,27 +1,27 @@
 <svg>
   <use href="#scrollview" >
-    <use href="#scrollview-item" height="200">
+    <use href="#scrollview-item" height="150">
       <rect width="100%" height="100%" fill="fb-cyan">
-      <text class="text stack-gap" id="line_0">...station</text> 
-      <text class="text stack-gap" id="time_0">...dep</text> 
+      <text class="text" x="5%" y="35" id="line_0">...station</text> 
+      <text class="text" x="30%" y="120" id="time_0">...dep</text> 
     </rect>
     </use>
-    <use href="#scrollview-item" height="200">
+    <use href="#scrollview-item" height="150">
       <rect width="100%" height="100%" fill="fb-red">
-      <text class="text stack-gap" id="line_1">...station</text> 
-      <text class="text stack-gap" id="time_1">...dep</text> 
+      <text class="text" x="5%" y="35" id="line_1">...station</text> 
+      <text class="text" x="30%" y="120" id="time_1">...dep</text> 
     </rect>
     </use>
-    <use href="#scrollview-item" height="200">
+    <use href="#scrollview-item" height="150">
       <rect width="100%" height="100%" fill="fb-green">
-      <text class="text stack-gap" id="line_2">...station</text> 
-      <text class="text stack-gap" id="time_2">...dep</text> 
+      <text class="text" x="5%" y="35" id="line_2">...station</text> 
+      <text class="text" x="30%" y="120" id="time_2">...dep</text> 
     </rect>
     </use>
-    <use href="#scrollview-item" height="200">
+    <use href="#scrollview-item" height="150">
       <rect width="100%" height="100%" fill="fb-cyan">
-      <text class="text stack-gap" id="line_3">...station</text> 
-      <text class="text stack-gap" id="time_3">...dep</text> 
+      <text class="text" x="5%" y="35" id="line_3">...station</text> 
+      <text class="text" x="30%" y="120" id="time_3">...dep</text> 
     </rect>
     </use>
   </use>

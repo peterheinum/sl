@@ -1,6 +1,6 @@
 .text {
-  text-length: 32
-  x: 20%;
+  text-length: 32;
+  font-size: 33;
 }
 
 .application-fill           { fill: fb-green; }

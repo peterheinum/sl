@@ -13,21 +13,25 @@ messaging.peerSocket.onopen = () => {
 
 const selectId = (id) => document.getElementById(id)
 
-const createClickableStation = (stations) => {
+const renderStations = (stations) => {
   for (let i = 0; i < stations.length; i++) {
     const {d, t, n} = stations[i]
 
     const lineEl = selectId(`line_${i}`) 
     const timeEl = selectId(`time_${i}`) 
-
-    lineEl && (lineEl.text = `${n} ${d}`)
+    const lineText = `${n} ${d}`
+    if (lineEl) {
+      lineEl.text = lineText
+      if (lineText.length > 17) { 
+        lineEl.style.fontSize = 
+          lineEl.style.fontSize * 
+          ((1 - (lineText.length/17) + 1)*1.25) // handle too long text
+      }
+    } 
 
     if (timeEl) {
-      console.log(timeEl.y)
-      console.log(typeof timeEl.y)
       timeEl.text = `${t}`
     }
-    
   }
 }
 
@@ -37,8 +41,10 @@ messaging.peerSocket.onerror = err => {
 
 messaging.peerSocket.onmessage = ({data}) => {
   console.log(JSON.stringify(data))
-  console.log('yo')
-  createClickableStation(data)
+  const { state } = data
+  state 
+    ? console.log(state)
+    : renderStations(data)
 }
 
 const sendMessage = (data, type) => {
