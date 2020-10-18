@@ -10,23 +10,22 @@ import {
   sleep,
   createUrl,
   doAll,
-  prop
+  prop,
+  both,
+  parseResponse,
+  parseJson,
+  symbolCounter,
+  splitToChunks
 } from './utils'
 
 const state = {
   stations: []
 }
 
-messaging.peerSocket.onopen = () => {
-  console.log('Ready')
-}
-
 messaging.peerSocket.onerror = (err) => {
   console.log(`Connection error: ${err.code} - ${err.message}`)
 }
 
-const parseResponse = response => response.text()
-const parseJson = json => JSON.parse(json)
 const extract = (url) => fetch(url).then(parseResponse).then(parseJson)
 const extractResData = url => extract(url).then(r => r.ResponseData)
 
@@ -45,15 +44,30 @@ const getIdsOfCloseStops = (closeStops) => {
   return doAll(map(extractFirstId)(urls))
 }
 
-const getNextArrival = pipe(
+const calculateTimeDiff = (time) => {
+  const [hour, minute] = time.split(':').map(str => parseInt(str))
+  const t = new Date()
+  const hourDiff = hour - t.getHours()
+  const minuteDiff = minute - t.getMinutes()
+  return (hourDiff * 60) + minuteDiff
+}
+
+// 6 min --> 6 to send less data
+const fixTime = (time) => time.includes(' ') 
+  ? time.split(' ')[0]
+  : time.includes(':') 
+    ? calculateTimeDiff(time)
+    : time
+
+const getNextArrival = (transportation) => pipe(
   prop('0'),
-  prop('Buses'),
+  prop(transportation),
   map(({ Destination, DisplayTime, LineNumber }) => 
-    ({ d: Destination, t: DisplayTime, n: LineNumber })
+    ({ d: Destination, t: fixTime(DisplayTime), n: LineNumber })
   )
 )
 
-const extractBusesAndMetro = url => extractResData(url).then(getNextArrival)
+const extractBusesAndMetro = url => extractResData(url).then(both(getNextArrival('Buses'), getNextArrival('Metros')))
 
 const getNextDeparturesFromCloseStops = (closeStopIds) => {
   const mapper = siteId => createUrl('/realtimedeparturesV4.json', { 
@@ -66,25 +80,13 @@ const getNextDeparturesFromCloseStops = (closeStopIds) => {
   return doAll(urls.map(extractBusesAndMetro))
 }
 
-const symbolCounter = pipe(JSON.stringify, str => str.length)
-
-const splitToChunks = (arr, chunkSize, acc = []) => (
-  arr.length > chunkSize ?
-      splitToChunks(
-          arr.slice(chunkSize),
-          chunkSize,
-          [...acc, arr.slice(0, chunkSize)]
-      ) :
-      [...acc, arr]
-)
-
 const sendMessage = (data) => {
   messaging.peerSocket.send(data)
 } 
 
 const chunkAndSend = (data) => {
   const safeByteAmount = symbolCounter(data) > 260 
-    ? splitToChunks(data, 3)
+    ? splitToChunks(data.slice(0, 17), 3)
     : [data]
   safeByteAmount.forEach(chunk => sendMessage(chunk))
   sendMessage({complete: true})
@@ -97,22 +99,29 @@ const gpsRecieved = (data) => {
 
   if (!longitude || !latitude) return Promise.reject('ping')
 
-  const url = createUrl('/nearbystopsv2', { originCoordLat: latitude, originCoordLong: longitude, maxNo: 4 })
+  const url = createUrl('/nearbystopsv2', {
+    originCoordLat: latitude, 
+    originCoordLong: longitude, 
+    maxNo: 4 
+  })
+  
   return extract(url)
     .then(getNamesOfCloseStops)
     .then(tap(pipe(flatten, saveStationsToState)))
 }
 
-
+const sortByTime = (data) => data.sort((a, b) => {
+  if (a.t === 'nu') return 1
+  return a.t - b.t
+})
 
 messaging.peerSocket.onmessage = () => {
-  console.log('companion msg recived')
-  
   geolocation.getCurrentPosition(({coords}) => {
     gpsRecieved(coords)
     .then(getIdsOfCloseStops)
     .then(getNextDeparturesFromCloseStops)
     .then(flatten)
+    .then(sortByTime)
     .then(chunkAndSend)
     .catch(console.log)
   })

@@ -6,7 +6,6 @@ import { vibration } from "haptics";
 
 
 messaging.peerSocket.onopen = () => {
-  console.log('Ready')
   sendMessage({})
 }
 
@@ -21,16 +20,19 @@ const renderStations = (stations) => {
     const timeEl = selectId(`time_${i}`) 
     const lineText = `${n} ${d}`
     if (lineEl) {
+      if (lineText.length > 20) lineText.slice(0, 15)
       lineEl.text = lineText
-      if (lineText.length > 17) { 
+      if (lineText.length > 16) {
         lineEl.style.fontSize = 
           lineEl.style.fontSize * 
-          ((1 - (lineText.length/17) + 1)*1.25) // handle too long text
+          ((1 - (lineText.length/17) + 1)) // handle too long text
       }
     } 
 
     if (timeEl) {
-      timeEl.text = `${t}`
+      t === 'Nu'
+        ? timeEl.text = `${t}`
+        : timeEl.text = `${t} min`
     }
   }
 }
@@ -53,14 +55,12 @@ messaging.peerSocket.onmessage = ({data}) => {
 }
 
 const sendMessage = (data) => {
-  console.log('we want to send message in the app')
   if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
     // Send the data to peer as a message
     messaging.peerSocket.send({
       ...data
     })
   } else {
-    console.log('but we cant')
     setTimeout(() => {
       sendMessage(data)
     }, 500)

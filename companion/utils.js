@@ -15,6 +15,26 @@ export const doAll = promises => Promise.all(promises)
 
 export const prop = (key) => (obj) => obj[key]
 
+export const both = (fnA, fnB) => data => ([...fnA(data), ...fnB(data)])
+
+export const parseResponse = response => response.text()
+
+export const parseJson = json => JSON.parse(json)
+
+
+
+export const symbolCounter = pipe(JSON.stringify, str => str.length)
+
+export const splitToChunks = (arr, chunkSize, acc = []) => (
+  arr.length > chunkSize ?
+      splitToChunks(
+          arr.slice(chunkSize),
+          chunkSize,
+          [...acc, arr.slice(0, chunkSize)]
+      ) :
+      [...acc, arr]
+)
+
 const endpointKeyMap = {
   '/nearbystopsv2': '1cf0921717a5404cbfa4ded21f5f5f33',
   '/realtimedeparturesV4.json': '5850e332248b4f0a9e76f681e4cb0e07',
