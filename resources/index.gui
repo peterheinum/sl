@@ -1,32 +1,27 @@
-<!-- <svg viewport-fill="lightblue">
-  <svg class="horizontal-pad full-size" y="50" x="20">
-
-  </svg>
-</svg> -->
 <svg>
   <use href="#scrollview" >
     <use href="#scrollview-item" height="200">
       <rect width="100%" height="100%" fill="fb-cyan">
-      <text class="text" id="line0">...station</text> 
-      <text class="text" id="departure0">...dep</text> 
+      <text class="text stack-gap" id="line_0">...station</text> 
+      <text class="text stack-gap" id="time_0">...dep</text> 
     </rect>
     </use>
     <use href="#scrollview-item" height="200">
       <rect width="100%" height="100%" fill="fb-red">
-      <text class="text" id="line1">...station</text> 
-      <text class="text" id="departure1">...dep</text> 
+      <text class="text stack-gap" id="line_1">...station</text> 
+      <text class="text stack-gap" id="time_1">...dep</text> 
     </rect>
     </use>
     <use href="#scrollview-item" height="200">
       <rect width="100%" height="100%" fill="fb-green">
-      <text class="text" id="line2">...station</text> 
-      <text class="text" id="departure2">...dep</text> 
+      <text class="text stack-gap" id="line_2">...station</text> 
+      <text class="text stack-gap" id="time_2">...dep</text> 
     </rect>
     </use>
     <use href="#scrollview-item" height="200">
       <rect width="100%" height="100%" fill="fb-cyan">
-      <text class="text" id="line3">...station</text> 
-      <text class="text" id="departure3">...dep</text> 
+      <text class="text stack-gap" id="line_3">...station</text> 
+      <text class="text stack-gap" id="time_3">...dep</text> 
     </rect>
     </use>
   </use>

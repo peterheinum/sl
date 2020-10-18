@@ -11,15 +11,23 @@ messaging.peerSocket.onopen = () => {
   geolocation.getCurrentPosition(onPositionRetrieved)
 }
 
+const selectId = (id) => document.getElementById(id)
+
 const createClickableStation = (stations) => {
   for (let i = 0; i < stations.length; i++) {
-    const lineEl = document.getElementById(`line${i}`) 
-    const departureEl = document.getElementById(`departure${i}`) 
     const {d, t, n} = stations[i]
-    console.log(lineEl, `line${i}`)
-    console.log(departureEl)
+
+    const lineEl = selectId(`line_${i}`) 
+    const timeEl = selectId(`time_${i}`) 
+
     lineEl && (lineEl.text = `${n} ${d}`)
-    departureEl && (departureEl.text = `${t}`)
+
+    if (timeEl) {
+      console.log(timeEl.y)
+      console.log(typeof timeEl.y)
+      timeEl.text = `${t}`
+    }
+    
   }
 }
 

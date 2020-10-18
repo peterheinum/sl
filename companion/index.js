@@ -33,8 +33,6 @@ const createUrl = (endpoint, params) => baseUrl + endpoint
   + '?key=' + endpointKeyMap[endpoint] 
   + Object.keys(params).map(key => '&' + key + '=' + params[key]).join('')
 
-const nearbyStopsUrl = (lat, lng) => encodeURI('https://api.sl.se/api2/nearbystopsv2?key=' + apiKey + '&originCoordLat=' + lat + '&originCoordLong=' + lng)
-
 const parseResponse = response => response.text()
 const parseJson = json => JSON.parse(json)
 const extract = (url) => fetch(url).then(parseResponse).then(parseJson)
