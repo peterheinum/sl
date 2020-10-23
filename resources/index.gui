@@ -2,113 +2,148 @@
   <use href="#scrollview" >
     <use href="#scrollview-item" id="row_0" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_0">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_0">Fetching data...</text> 
       <text class="text" x="5%" y="90" id="time_0"></text> 
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
     </rect>
     </use>
     <use href="#scrollview-item" id="row_1" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_1">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_1"></text> 
       <text class="text" x="5%" y="90" id="time_1"></text> 
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
     </rect>
     </use>
     <use href="#scrollview-item" id="row_2" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_2">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_2"></text> 
       <text class="text" x="5%" y="90" id="time_2"></text> 
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
     </rect>
     </use>
     <use href="#scrollview-item" id="row_4" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_4">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_4"></text> 
       <text class="text" x="5%" y="90" id="time_4"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_5" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_5">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_5"></text> 
       <text class="text" x="5%" y="90" id="time_5"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_6" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_6">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_6"></text> 
       <text class="text" x="5%" y="90" id="time_6"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_7" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_7">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_7"></text> 
       <text class="text" x="5%" y="90" id="time_7"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_8" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_8">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_8"></text> 
       <text class="text" x="5%" y="90" id="time_8"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_9" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_9">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_9"></text> 
       <text class="text" x="5%" y="90" id="time_9"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_10" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_10">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_10"></text> 
       <text class="text" x="5%" y="90" id="time_10"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_11" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_11">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_11"></text> 
       <text class="text" x="5%" y="90" id="time_11"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_12" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_12">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_12"></text> 
       <text class="text" x="5%" y="90" id="time_12"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_13" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_13">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_13"></text> 
       <text class="text" x="5%" y="90" id="time_13"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_14" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_14">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_14"></text> 
       <text class="text" x="5%" y="90" id="time_14"></text>
       <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
     </rect>
     </use>
     <use href="#scrollview-item" id="row_15" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_15">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_15"></text> 
       <text class="text" x="5%" y="90" id="time_15"></text>
-      <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" /> 
+      <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
     </rect>
     </use>
     <use href="#scrollview-item" id="row_16" height="150">
       <rect width="100%" height="100%" fill="fb-black">
-      <text class="text" x="5%" y="35" id="line_16">Loading...</text> 
+      <text class="text" x="5%" y="35" id="line_16"></text> 
       <text class="text" x="5%" y="90" id="time_16"></text>
+      <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
+    </rect>
+    </use>
+    <use href="#scrollview-item" id="row_17" height="150">
+      <rect width="100%" height="100%" fill="fb-black">
+      <text class="text" x="5%" y="35" id="line_17"></text> 
+      <text class="text" x="5%" y="90" id="time_17"></text>
+      <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
+    </rect>
+    </use>
+    <use href="#scrollview-item" id="row_18" height="150">
+      <rect width="100%" height="100%" fill="fb-black">
+      <text class="text" x="5%" y="35" id="line_18"></text> 
+      <text class="text" x="5%" y="90" id="time_18"></text>
+      <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
+    </rect>
+    </use>
+    <use href="#scrollview-item" id="row_19" height="150">
+      <rect width="100%" height="100%" fill="fb-black">
+      <text class="text" x="5%" y="35" id="line_19"></text> 
+      <text class="text" x="5%" y="90" id="time_19"></text>
+      <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
+    </rect>
+    </use>
+    <use href="#scrollview-item" id="row_20" height="150">
+      <rect width="100%" height="100%" fill="fb-black">
+      <text class="text" x="5%" y="35" id="line_20"></text> 
+      <text class="text" x="5%" y="90" id="time_20"></text>
+      <rect x="0" y="$+15" width="100%" height="2" fill="fb-cyan" />
+    </rect>
+    </use>
+    <use href="#scrollview-item" id="row_21" height="150">
+      <rect width="100%" height="100%" fill="fb-black">
+      <text class="text" x="5%" y="35" id="line_21"></text> 
+      <text class="text" x="5%" y="90" id="time_21"></text>
     </rect>
     </use>
   </use>

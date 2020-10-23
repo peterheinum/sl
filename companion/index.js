@@ -7,15 +7,17 @@ import {
   flatten,
   map,
   tap,
-  sleep,
   createUrl,
   doAll,
   prop,
-  both,
+  unique,
+  chain,
   parseResponse,
   parseJson,
   symbolCounter,
-  splitToChunks
+  splitToChunks,
+  calculateTimeDiff,
+  find
 } from './utils'
 
 const state = {
@@ -44,14 +46,6 @@ const getIdsOfCloseStops = (closeStops) => {
   return doAll(map(extractFirstId)(urls))
 }
 
-const calculateTimeDiff = (time) => {
-  const [hour, minute] = time.split(':').map(str => parseInt(str))
-  const t = new Date()
-  const hourDiff = hour - t.getHours()
-  const minuteDiff = minute - t.getMinutes()
-  return (hourDiff * 60) + minuteDiff
-}
-
 // 6 min --> 6 to send less data
 const fixTime = (time) => time.includes(' ') 
   ? time.split(' ')[0]
@@ -67,7 +61,16 @@ const getNextArrival = (transportation) => pipe(
   )
 )
 
-const extractBusesAndMetro = url => extractResData(url).then(both(getNextArrival('Buses'), getNextArrival('Metros')))
+const commuteTypes = [
+  'Metros',
+  'Buses',
+  'Trains',
+  'Trams'
+  //Ships // mans not a sailor
+]
+
+const extractBusesAndMetro = url => extractResData(url)
+  .then(chain(commuteTypes.map(getNextArrival)))
 
 const getNextDeparturesFromCloseStops = (closeStopIds) => {
   const mapper = siteId => createUrl('/realtimedeparturesV4.json', { 
@@ -86,7 +89,7 @@ const sendMessage = (data) => {
 
 const chunkAndSend = (data) => {
   const safeByteAmount = symbolCounter(data) > 260 
-    ? splitToChunks(data.slice(0, 17), 3)
+    ? splitToChunks(data.slice(0, 22), 3)
     : [data]
   safeByteAmount.forEach(chunk => sendMessage(chunk))
   sendMessage({complete: true})
@@ -102,7 +105,8 @@ const gpsRecieved = (data) => {
   const url = createUrl('/nearbystopsv2', {
     originCoordLat: latitude, 
     originCoordLong: longitude, 
-    maxNo: 4 
+    maxNo: 10,
+    r: 2000
   })
   
   return extract(url)
@@ -111,9 +115,17 @@ const gpsRecieved = (data) => {
 }
 
 const sortByTime = (data) => data.sort((a, b) => {
-  if (a.t === 'nu') return 1
-  return a.t - b.t
+  if (a.t === 'Nu') return -1
+  if (b.t === 'Nu') return 1
+  return Number(a.t) - Number(b.t)
 })
+
+const filterNonUnique = (array) => array.reduce((acc, cur) => {
+  !find(cur)(acc) && acc.push(cur)
+  return acc
+}, [])
+
+const removeNonInformative = (array) => array.filter(({t}) => t !== '-')
 
 messaging.peerSocket.onmessage = () => {
   geolocation.getCurrentPosition(({coords}) => {
@@ -121,6 +133,8 @@ messaging.peerSocket.onmessage = () => {
     .then(getIdsOfCloseStops)
     .then(getNextDeparturesFromCloseStops)
     .then(flatten)
+    .then(removeNonInformative)
+    .then(filterNonUnique)
     .then(sortByTime)
     .then(chunkAndSend)
     .catch(console.log)

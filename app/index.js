@@ -17,7 +17,7 @@ const hideRow = (i) => {
 
 const renderStations = (stations) => {
   console.log(stations.length)
-  for (let i = 0; i < 17; i++) {
+  for (let i = 0; i < 22; i++) {
     if (!stations[i]) {
       hideRow(i)
       continue

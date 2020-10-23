@@ -15,15 +15,27 @@ export const doAll = promises => Promise.all(promises)
 
 export const prop = (key) => (obj) => obj[key]
 
-export const both = (fnA, fnB) => data => ([...fnA(data), ...fnB(data)])
+export const both = (fnA, fnB) => (data) => ([...fnA(data), ...fnB(data)])
 
 export const parseResponse = response => response.text()
 
 export const parseJson = json => JSON.parse(json)
 
-
+export const chain = (fns) => (data) => flatten(fns.map(fn => fn(data)))
 
 export const symbolCounter = pipe(JSON.stringify, str => str.length)
+
+export const unique = (array) => [...new Set(array)]
+
+export const find = (obj) => (array) => array.length && array.find(arrayItem => JSON.stringify(arrayItem) === JSON.stringify(obj))
+
+export const calculateTimeDiff = (time) => {
+  const [hour, minute] = time.split(':').map(Number)
+  const t = new Date()
+  const hourDiff = hour - t.getHours()
+  const minuteDiff = minute - t.getMinutes()
+  return (hourDiff * 60) + minuteDiff
+}
 
 export const splitToChunks = (arr, chunkSize, acc = []) => (
   arr.length > chunkSize ?
