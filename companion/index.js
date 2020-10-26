@@ -10,6 +10,7 @@ import {
   createUrl,
   doAll,
   prop,
+  path,
   unique,
   chain,
   parseResponse,
@@ -17,19 +18,18 @@ import {
   symbolCounter,
   splitToChunks,
   calculateTimeDiff,
-  find
+  find,
+  objOf
 } from './utils'
 
-const state = {
-  stations: []
-}
+const stations = []
 
 messaging.peerSocket.onerror = (err) => {
   console.log(`Connection error: ${err.code} - ${err.message}`)
 }
 
-const extract = (url) => fetch(url).then(parseResponse).then(parseJson)
-const extractResData = url => extract(url).then(r => r.ResponseData)
+const get = (url) => fetch(url).then(parseResponse).then(parseJson)
+const extractResData = url => get(url).then(r => r.ResponseData)
 
 const getNamesOfCloseStops = ({stopLocationOrCoordLocation}) => stopLocationOrCoordLocation.map(({StopLocation}) => StopLocation.name)
 
@@ -41,9 +41,10 @@ const getIdsOfCloseStops = (closeStops) => {
     MaxResults: 1, 
     StationsOnly: true 
   })
-  
+
   const urls = map(mapper)(closeStops)
   return doAll(map(extractFirstId)(urls))
+    .then(tap(console.log))
 }
 
 // 6 min --> 6 to send less data
@@ -95,7 +96,57 @@ const chunkAndSend = (data) => {
   sendMessage({complete: true})
 }
 
-const saveStationsToState = stationNames => state.stations = stationNames
+
+
+const saveStations = pipe(
+  flatten,
+  map(objOf('name')),
+  (names) => stations.push(...names),
+)
+
+const createNearbyStopsUrl = (originCoordLat, originCoordLong) => createUrl('/nearbystopsv2', {
+  originCoordLat, 
+  originCoordLong, 
+  maxNo: 3,
+  r: 1000
+})
+
+const createTypeAheadUrl = (searchString) => createUrl('/typeahead.json', { 
+  searchString, 
+  MaxResults: 1, 
+  StationsOnly: true 
+})
+
+const saveIds = pipe(
+  map((value, index) => stations[index].id = value)
+)
+
+const createRealtimeDepartureUrl = siteId => createUrl('/realtimedeparturesV4.json', { 
+  timewindow: 30, 
+  siteId 
+})
+
+const extractProps = (props) => (obj) => flatten(props.reduce((acc, cur) => ([...acc, obj[cur]]), []))
+
+const getAllInfo = ({ longitude, latitude }) => {
+  if (!longitude || !latitude) return Promise.reject('Missing coordinates')
+  get(createNearbyStopsUrl(latitude, longitude))
+    .then(pipe(
+      prop('stopLocationOrCoordLocation'), 
+      map(path(['StopLocation', 'name'])),
+      tap(saveStations),
+    ))
+    .then(map(pipe(createTypeAheadUrl, extractFirstId)))
+    .then(doAll)
+    .then(tap(console.log))
+    .then(map(pipe(createRealtimeDepartureUrl, extractResData)))
+    .then(doAll)
+    .then(pipe(
+      map(extractProps(commuteTypes)),
+      flatten
+    ))
+    .then(tap(console.log))
+}
 
 const gpsRecieved = (data) => {
   const { longitude, latitude } = data
@@ -105,13 +156,13 @@ const gpsRecieved = (data) => {
   const url = createUrl('/nearbystopsv2', {
     originCoordLat: latitude, 
     originCoordLong: longitude, 
-    maxNo: 10,
-    r: 2000
+    maxNo: 3,
+    r: 1000
   })
   
-  return extract(url)
+  return get(url)
     .then(getNamesOfCloseStops)
-    .then(tap(pipe(flatten, saveStationsToState)))
+    .then(tap(saveStations))
 }
 
 const sortByTime = (data) => data.sort((a, b) => {
@@ -129,14 +180,15 @@ const removeNonInformative = (array) => array.filter(({t}) => t !== '-')
 
 messaging.peerSocket.onmessage = () => {
   geolocation.getCurrentPosition(({coords}) => {
-    gpsRecieved(coords)
-    .then(getIdsOfCloseStops)
-    .then(getNextDeparturesFromCloseStops)
-    .then(flatten)
-    .then(removeNonInformative)
-    .then(filterNonUnique)
-    .then(sortByTime)
-    .then(chunkAndSend)
-    .catch(console.log)
+    getAllInfo(coords)
+    // gpsRecieved(coords)
+    // .then(getIdsOfCloseStops)
+    // .then(getNextDeparturesFromCloseStops)
+    // .then(flatten)
+    // .then(removeNonInformative)
+    // .then(filterNonUnique)
+    // .then(sortByTime)
+    // .then(chunkAndSend)
+    // .catch(console.log)
   })
  }

@@ -1,4 +1,4 @@
-export const pipe = (...fns) => (...args) => fns.reduce((acc, cur) => cur(acc), args)
+export const pipe = (...fns) => (args) => fns.reduce((acc, cur) => cur(acc), args)
 
 export const flatten = array => array.reduce((acc, cur) => ([...acc, ...cur]),[])
 
@@ -9,9 +9,13 @@ export const tap = fn => obj => {
   return obj
 }
 
+export const path = (route) => (obj) => route.reduce((acc, key) => acc[key], obj)
+
 export const sleep = (ms) => () => new Promise(resolve => setTimeout(() => resolve(), ms))
 
 export const doAll = promises => Promise.all(promises)
+
+export const objOf = (key) => (data) => ({ [key]: data })
 
 export const prop = (key) => (obj) => obj[key]
 
