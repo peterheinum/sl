@@ -128,23 +128,52 @@ const createRealtimeDepartureUrl = siteId => createUrl('/realtimedeparturesV4.js
 
 const extractProps = (props) => (obj) => flatten(props.reduce((acc, cur) => ([...acc, obj[cur]]), []))
 
+const extractStationNames = pipe(
+  prop('stopLocationOrCoordLocation'), 
+  map(path(['StopLocation', 'name'])),
+  tap(saveStations),
+)
+
+const fetchRealTimeInfo = pipe(
+  createRealtimeDepartureUrl,
+  extractResData
+)
+
+const fetchStationIds = pipe(
+  createTypeAheadUrl, 
+  extractFirstId
+)
+
+const extractCommuteTypes = pipe(
+  map(extractProps(commuteTypes)),
+  flatten
+)
+
+const extractTimeLineAndDest = pipe(
+  prop(transportation),
+  map(({ Destination, DisplayTime, LineNumber, TransportMode, StopAreaName }) => 
+    ({ 
+      d: Destination, 
+      t: fixTime(DisplayTime), 
+      l: LineNumber, 
+      type: TransportMode,
+      name: StopAreaName 
+    })
+  )
+)
+
 const getAllInfo = ({ longitude, latitude }) => {
   if (!longitude || !latitude) return Promise.reject('Missing coordinates')
   get(createNearbyStopsUrl(latitude, longitude))
-    .then(pipe(
-      prop('stopLocationOrCoordLocation'), 
-      map(path(['StopLocation', 'name'])),
-      tap(saveStations),
-    ))
-    .then(map(pipe(createTypeAheadUrl, extractFirstId)))
+    .then(extractStationNames)
+    .then(map(fetchStationIds))
     .then(doAll)
+    .then(tap(saveIds))
+    .then(map(fetchRealTimeInfo))
+    .then(doAll)
+    .then(extractCommuteTypes)
     .then(tap(console.log))
-    .then(map(pipe(createRealtimeDepartureUrl, extractResData)))
-    .then(doAll)
-    .then(pipe(
-      map(extractProps(commuteTypes)),
-      flatten
-    ))
+    .then(map(extractTimeLineAndDest))
     .then(tap(console.log))
 }
 
