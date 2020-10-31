@@ -33,6 +33,8 @@ export const unique = (array) => [...new Set(array)]
 
 export const find = (obj) => (array) => array.length && array.find(arrayItem => JSON.stringify(arrayItem) === JSON.stringify(obj))
 
+export const log = (d) => console.log(JSON.stringify(d, null, 2))
+
 export const calculateTimeDiff = (time) => {
   const [hour, minute] = time.split(':').map(Number)
   const t = new Date()

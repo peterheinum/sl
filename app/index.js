@@ -22,11 +22,11 @@ const renderStations = (stations) => {
       hideRow(i)
       continue
     }
-    const {d, t, n} = stations[i]
-
+    const {d, t, l, type, name} = stations[i]
+    
     const lineEl = selectId(`line_${i}`) 
     const timeEl = selectId(`time_${i}`) 
-    const lineText = `${n} ${d}`
+    const lineText = `${l} ${d}`
     if (lineEl) {
       if (lineText.length > 20) lineText.slice(0, 15)
       lineEl.text = lineText
