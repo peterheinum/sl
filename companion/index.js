@@ -62,8 +62,7 @@ const commuteTypes = [
   //Ships // mans not a sailor
 ]
 const sendMessage = pipe(
-  tap(map(log)),
-  map(messaging.peerSocket.send),
+  map(data => messaging.peerSocket.send(data)),
   () => messaging.peerSocket.send({complete: true})
 )
 
@@ -133,8 +132,8 @@ const extractTimeLineAndDest = ({
   })
 
 const sensuallyMassageData = pipe(
-  // filterNonUnique,
-  // removeNonInformative, 
+  filterNonUnique,
+  removeNonInformative, 
   sortByTime
 )
 
@@ -155,7 +154,7 @@ messaging.peerSocket.onmessage = () => {
   geolocation.getCurrentPosition(({coords}) => {
     getAllInfo(coords)
       .then(sensuallyMassageData)
-      .then(tap(log))
+      // .then(tap(log))
       .then(sendMessage)
   })
  }

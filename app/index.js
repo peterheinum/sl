@@ -4,6 +4,7 @@ import * as messaging from "messaging"
 import { display } from "display"
 import { vibration } from "haptics";
 
+const log = data => console.log(JSON.stringify(data, null, 2))
 
 messaging.peerSocket.onopen = () => {
   sendMessage({})
@@ -53,12 +54,13 @@ const state = []
 
 messaging.peerSocket.onmessage = ({data}) => {
   const { complete } = data
+  log(data)
   if (complete) {
     vibration.start("nudge-max")
     display.poke()
     renderStations(state)
   } else {
-    state.push(...data)
+    state.push(data)
   }
 }
 
