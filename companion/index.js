@@ -62,7 +62,13 @@ const commuteTypes = [
   //Ships // mans not a sailor
 ]
 const sendMessage = pipe(
-  map(data => messaging.peerSocket.send(data)),
+  stations => {
+    Object.keys(stations).forEach(station => 
+      stations[station].forEach(departure => 
+        messaging.peerSocket.send({ departure, station })
+      )
+    )
+  },
   () => messaging.peerSocket.send({complete: true})
 )
 
@@ -127,15 +133,22 @@ const extractTimeLineAndDest = ({
     d: Destination, 
     t: fixTime(DisplayTime), 
     l: LineNumber, 
-    type: TransportMode,
-    name: StopAreaName 
+    m: TransportMode,
+    n: StopAreaName 
   })
 
-const sensuallyMassageData = pipe(
+const cleanupData = pipe(
   filterNonUnique,
   removeNonInformative, 
   sortByTime
 )
+
+const sortByStation = (stops) => stops.reduce((acc, cur) => {
+  const { n } = cur
+  delete cur.n
+  acc[n] ? acc[n].push(cur) : acc[n] = [cur]
+  return acc
+}, {})
 
 const getAllInfo = ({ longitude, latitude }) => {
   if (!longitude || !latitude) return Promise.reject('Missing coordinates')
@@ -151,10 +164,11 @@ const getAllInfo = ({ longitude, latitude }) => {
 }
 
 messaging.peerSocket.onmessage = () => {
-  geolocation.getCurrentPosition(({coords}) => {
+  geolocation.getCurrentPosition(({coords}) =>
     getAllInfo(coords)
-      .then(sensuallyMassageData)
+      .then(cleanupData)
+      .then(sortByStation)
       // .then(tap(log))
       .then(sendMessage)
-  })
- }
+  )
+}

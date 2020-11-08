@@ -50,17 +50,24 @@ messaging.peerSocket.onerror = err => {
   console.log(`Connection error: ${err.code} - ${err.message}`)
 }
 
-const state = []
+const state = {}
 
 messaging.peerSocket.onmessage = ({data}) => {
-  const { complete } = data
-  log(data)
+  const { complete, departure, station } = data
+  // log(data)
   if (complete) {
     vibration.start("nudge-max")
     display.poke()
-    renderStations(state)
+    
+    // log(state)
+    Object.keys(state).forEach(key => {
+      console.log(key)
+      state[key].forEach(log)
+      console.log('\n')
+    })
+    // renderStations(state)
   } else {
-    state.push(data)
+    state[station] = [...state[station], departure]
   }
 }
 
