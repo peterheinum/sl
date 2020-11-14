@@ -12,18 +12,19 @@ messaging.peerSocket.onopen = () => {
 
 const selectId = (id) => document.getElementById(id)
 
-const hideRow = (i) => {
-  selectId(`row_${i}`).style.display = 'none'
-}
+const hideRow = (i) => selectId(`row_${i}`).style.display = 'none'
+
+const selectHeader = (i) => selectId(`header_${i}`)
+
+const displayHeader = (i) => selectHeader(i).style.display = 'block'
 
 const renderStations = (stations) => {
-  console.log(stations.length)
   for (let i = 0; i < 22; i++) {
     if (!stations[i]) {
       hideRow(i)
       continue
     }
-    const {d, t, l, type, name} = stations[i]
+    const {d, t, l} = stations[i]
     
     const lineEl = selectId(`line_${i}`) 
     const timeEl = selectId(`time_${i}`) 
@@ -54,20 +55,47 @@ const state = {}
 
 messaging.peerSocket.onmessage = ({data}) => {
   const { complete, departure, station } = data
-  // log(data)
   if (complete) {
     vibration.start("nudge-max")
     display.poke()
-    
-    // log(state)
-    Object.keys(state).forEach(key => {
-      console.log(key)
-      state[key].forEach(log)
-      console.log('\n')
-    })
-    // renderStations(state)
+    renderState()
   } else {
     state[station] = [...state[station], departure]
+  }
+}
+
+const renderState = () => {
+  let headerIndex = 0
+  Object.keys(state).forEach(station => {
+    displayHeader(headerIndex)
+    selectHeader(headerIndex).text = station
+    renderEntries(state[station], headerIndex*5)
+    headerIndex++
+  }) 
+}
+
+const renderEntries = (entries, i) => {
+  for (; i < entries; i++) {
+    const {d, t, l, m} = entries[i]
+    
+    const lineEl = selectId(`line_${i}`) 
+    const timeEl = selectId(`time_${i}`) 
+    const lineText = `${l} ${d}`
+    if (lineEl) {
+      if (lineText.length > 20) lineText.slice(0, 15)
+      lineEl.text = lineText
+      if (lineText.length > 16) {
+        lineEl.style.fontSize = 
+          lineEl.style.fontSize * 
+          ((1 - (lineText.length/17) + 1)) // handle too long text
+      }
+    } 
+
+    if (timeEl) {
+      t === 'Nu'
+        ? timeEl.text = `${t}`
+        : timeEl.text = `${t} min`
+    }
   }
 }
 
