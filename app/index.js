@@ -14,7 +14,10 @@ const selectId = (id) => document.getElementById(id)
 
 const hideRow = (i) => selectId(`row_${i}`).style.display = 'none'
 
+
 const selectHeader = (i) => selectId(`header_${i}`)
+
+const hideHeader = (i) => selectHeader(i).style.display = 'none'
 
 const displayHeader = (i) => selectHeader(i).style.display = 'block'
 
@@ -59,8 +62,15 @@ messaging.peerSocket.onmessage = ({data}) => {
     vibration.start("nudge-max")
     display.poke()
     renderState()
+    hideUnusedRows()
   } else {
     state[station] = [...state[station], departure]
+  }
+}
+
+const hideUnusedRows = () => {
+  for (let i = 0; i < 22; i++) {
+    !selectId(`line_${i}`).text && hideRow(i)    
   }
 }
 
@@ -69,33 +79,44 @@ const renderState = () => {
   Object.keys(state).forEach(station => {
     displayHeader(headerIndex)
     selectHeader(headerIndex).text = station
-    renderEntries(state[station], headerIndex*5)
+    console.log(`header_${headerIndex} ${station}`)
+    console.log(state[station].filter(Boolean).length)
+    renderEntries(state[station].filter(Boolean), headerIndex * 5, headerIndex * 5 + 5)
     headerIndex++
-  }) 
+  })
 }
 
-const renderEntries = (entries, i) => {
-  for (; i < entries; i++) {
-    const {d, t, l, m} = entries[i]
-    
-    const lineEl = selectId(`line_${i}`) 
-    const timeEl = selectId(`time_${i}`) 
-    const lineText = `${l} ${d}`
-    if (lineEl) {
-      if (lineText.length > 20) lineText.slice(0, 15)
-      lineEl.text = lineText
-      if (lineText.length > 16) {
-        lineEl.style.fontSize = 
-          lineEl.style.fontSize * 
-          ((1 - (lineText.length/17) + 1)) // handle too long text
-      }
-    } 
+const renderEntries = (entries, i, roof) => {
+  entries.forEach(log)
+  entries.forEach(entry => {
+    renderEntry(entry, i)
+    i++
+  })
+  for (; i < roof; i++) {
+    hideRow(i)    
+  }
+}
 
-    if (timeEl) {
-      t === 'Nu'
-        ? timeEl.text = `${t}`
-        : timeEl.text = `${t} min`
+const renderEntry = ({d, t, l, m}, i) => {
+  const lineEl = selectId(`line_${i}`) 
+  const timeEl = selectId(`time_${i}`) 
+  const lineText = `${l} ${d}`
+
+  if (lineEl) {
+    if (lineText.length > 20) lineText.slice(0, 15)
+    lineEl.text = lineText
+    if (lineText.length > 16) {
+      lineEl.style.fontSize = 
+        lineEl.style.fontSize * 
+        ((1 - (lineText.length/17) + 1)) // handle too long text
     }
+  } 
+
+  if (timeEl) {
+    t === 'Nu'
+      ? timeEl.text = `${t}`
+      : timeEl.text = `${t} min`
+      // console.log(lineText + `${t} min` + ' current i: ' + i)
   }
 }
 

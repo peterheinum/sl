@@ -1,6 +1,5 @@
 import { geolocation } from "geolocation"
 
-
 import * as messaging from 'messaging'
 import {
   pipe,
@@ -82,7 +81,7 @@ const createNearbyStopsUrl = (originCoordLat, originCoordLong) => createUrl('/ne
   originCoordLat, 
   originCoordLong, 
   maxNo: 3,
-  r: 1000
+  r: 2000
 })
 
 const createTypeAheadUrl = (searchString) => createUrl('/typeahead.json', { 
