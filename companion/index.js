@@ -63,7 +63,7 @@ const commuteTypes = [
 const sendMessage = pipe(
   stations => {
     Object.keys(stations).forEach(station => 
-      stations[station].forEach(departure => 
+      stations[station].slice(0, 5).forEach(departure => 
         messaging.peerSocket.send({ departure, station })
       )
     )
