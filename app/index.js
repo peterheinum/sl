@@ -1,13 +1,13 @@
 import document from 'document'
-import * as messaging from "messaging"
+import * as messaging from 'messaging'
 
-import { display } from "display"
-import { vibration } from "haptics";
+import { display } from 'display'
+import { vibration } from 'haptics'
 
 const log = data => console.log(JSON.stringify(data, null, 2))
-
+let wakeUpInterval = null
 messaging.peerSocket.onopen = () => {
-  sendMessage({})
+  wakeUpInterval = setInterval(() => sendMessage({}), 1500)
 }
 
 const selectId = (id) => document.getElementById(id)
@@ -24,12 +24,23 @@ messaging.peerSocket.onerror = err => {
   console.log(`Connection error: ${err.code} - ${err.message}`)
 }
 
+const displayStatusMessage = (status) => {
+  selectId('line_0').text = status
+}
+
 const state = {}
 
 messaging.peerSocket.onmessage = ({data}) => {
-  const { complete, departure, station } = data
+  const { complete, departure, station, awake } = data
+  if (awake) {
+    displayStatusMessage('fetching data')
+    wakeUpInterval && clearInterval(wakeUpInterval)
+    wakeUpInterval = null
+    return
+  }
+  
   if (complete) {
-    vibration.start("nudge-max")
+    vibration.start('nudge-max')
     display.poke()
     renderState()
     hideUnusedRows()

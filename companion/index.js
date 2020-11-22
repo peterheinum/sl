@@ -23,6 +23,7 @@ import {
 } from './utils'
 
 const stations = []
+let initFetchData = false
 
 messaging.peerSocket.onerror = (err) => {
   console.log(`Connection error: ${err.code} - ${err.message}`)
@@ -163,11 +164,15 @@ const getAllInfo = ({ longitude, latitude }) => {
 }
 
 messaging.peerSocket.onmessage = () => {
-  geolocation.getCurrentPosition(({coords}) =>
+  if (!initFetchData) {
+    initFetchData = true
+    messaging.peerSocket.send({awake: true})
+    geolocation.getCurrentPosition(({coords}) =>
     getAllInfo(coords)
-      .then(cleanupData)
-      .then(sortByStation)
-      // .then(tap(log))
-      .then(sendMessage)
-  )
+    .then(cleanupData)
+    .then(sortByStation)
+    // .then(tap(log))
+    .then(sendMessage)
+    )
+  }
 }
